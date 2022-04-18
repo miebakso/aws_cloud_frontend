@@ -30,28 +30,38 @@ const router = useRouter()
 const viewPostDetail  = function(id){
     router.push({ name: 'post', params: {'id': id}})
 }
+
+function edit(id) {
+    router.push({name: 'edit', query: {'id': id}})
+}
+function remove(id) {
+    router.push({name: 'remove', query: {'id': id}})
+}
 </script>
 
 <template>
 <div class="row justify-content-center">
     <div class="col-md-6 ">
         <div v-for="(post) in data['posts']" :key="post.id">
-            <div class="custom-card card" @click="viewPostDetail(post.id)">
-                <img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg" class="card-img-top" alt="...">
+            <div class="custom-card card" >
+                <img @click="viewPostDetail(post.id)" src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg" class="card-img-top" alt="...">
                 <div class="card-body">
-                    
                     <div class="row">
-                        <div class="col-md-7">
                         <h5 class="card-title">{{post.title}}</h5>
-                        </div>
+                        
+                    </div>
+                    <div class="row">
                         <div class="col-md-2">
                             <i class="fa-solid fa-heart"></i>{{post.likes}}
                         </div>
                         <div class="col-md-3">
                             {{post.date}}
                         </div>
+                        <div class="col-md-7 col-md-3 d-flex justify-content-end">
+                            <button class="custom-btn btn btn-sm btn-outline-warning" @click="edit(id=1)">Edit</button>
+                            <button class="custom-btn btn btn-sm btn-outline-danger" @click="remove(1)">Remove</button>
+                        </div>
                     </div>
-                    <p class="card-text">{{post.content}}</p>
                 </div>
             </div>
         </div>
@@ -62,5 +72,8 @@ const viewPostDetail  = function(id){
 <style scoped>
 .custom-card {
     margin-top: 20px;
+}
+.custom-btn {
+    margin-left: 20px;
 }
 </style>

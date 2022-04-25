@@ -1,7 +1,12 @@
 <script setup>
+import { useRouter } from 'vue-router'
+
+
+const router = useRouter()
 
 function logout() {
-  alert('logout')
+  localStorage.clear()
+  router.push({name: 'login'})
 }
 </script>
 

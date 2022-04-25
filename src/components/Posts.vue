@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
+import { onMounted } from "vue";
 
 const data = {
     'posts': [
@@ -25,15 +26,23 @@ const data = {
         }
     ]
 }
+
+
 const router = useRouter()
+// const props = defineProps(['data'])
+// console.log(props)
+// onMounted(async () => {
+//     console.log(props.data)
+// })
 
 const viewPostDetail  = function(id){
-    router.push({ name: 'post', params: {'id': id}})
+    router.push({ name: 'post', query: {'id': id}})
 }
 </script>
 
 <template>
 <div class="row justify-content-center">
+   
     <div class="col-md-6 ">
         <div v-for="(post) in data['posts']" :key="post.id">
             <div class="custom-card card" @click="viewPostDetail(post.id)">

@@ -1,5 +1,35 @@
 <script setup>
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import {BASE_URL} from '../assets/env.js'
 
+const router = useRouter()
+
+async function onSubmit(e) {
+    console.log(e.target.username.value)
+    console.log(e.target.password.value)
+    console.log(BASE_URL)
+    const login_detail = {
+        'username': e.target.username.value,
+        'password': e.target.password.value
+    }
+    try {    
+        const resp = await axios({
+            method: 'POST',
+            url: 'register',
+            baseURL: BASE_URL,
+            data: login_detail
+        })
+        
+        if (resp.status == 200) {
+            router.push({ name: 'login'})
+        } 
+
+    } catch(error) {
+        console.log(error)
+        alert("Username must be unique")
+    }
+}
 </script>
 
 <template>
@@ -9,18 +39,14 @@
             
             <div class="col-xs-12 col-md-6">
             <h1>Register</h1>
-            <form>
-                <div class="form-group">
-                    <label for="username">Name</label>
-                    <input type="text" class="form-control" id="name" placeholder="username">
-                </div>
+            <form @submit.prevent="onSubmit">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" class="form-control" id="username" placeholder="username">
+                    <input type="text" name="username" class="form-control" id="username" placeholder="username">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="password">
+                    <input type="password" name="password" class="form-control" id="password" placeholder="password">
                 </div>
                 <div class="text-center" >
                     <button type="submit" class="btn btn-md btn-outline-success ">Register</button>

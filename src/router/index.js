@@ -25,7 +25,7 @@ const router = createRouter({
       component: CreatePostView
     },
     {
-      path: '/post/:id',
+      path: '/post',
       name: 'post',
       component: DetailPostView
     },

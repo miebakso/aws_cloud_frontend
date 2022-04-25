@@ -1,5 +1,41 @@
 <script setup>
+import { ref} from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
+import { BASE_URL } from '../assets/env'
 
+
+const router = useRouter()
+
+function register() {
+    router.push({name: 'register'})
+}
+
+async function onSubmit(e) {
+    const login_detail = {
+        'username': e.target.username.value,
+        'password': e.target.password.value
+    }
+    try {    
+        const resp = await axios({
+            method: 'POST',
+            url: 'login',
+            baseURL: BASE_URL,
+            data: login_detail
+        })
+        if (resp.status == 200) {
+            const data = resp.data
+            localStorage.setItem("user_id", data.id);
+            localStorage.setItem("user_name", data.username);
+            localStorage.setItem("role", data.role_id);
+            router.push({ name: 'posts'})
+        } 
+
+    } catch(error) {
+        console.log(error)
+        alert("Wrong username / password")
+    }
+}
 </script>
 
 <template>
@@ -9,17 +45,19 @@
             
             <div class="col-xs-12 col-md-6">
             <h1> Stock Forum Login</h1>
-            <form>
+            <form @submit.prevent="onSubmit">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" class="form-control" id="username" placeholder="username">
+                    <input name="username"  type="text" class="form-control" id="username" placeholder="username">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="password">
+                    <input name="password"  type="password" class="form-control" id="password" placeholder="password">
                 </div>
                 <div class="text-center" >
+                    <button @click="register" style="margin-right: 40px;" class="btn btn-md btn-outline-info ">Register</button>
                     <button type="submit" class="btn btn-md btn-outline-success ">Login</button>
+                    
                 </div>
             </form>
             </div>

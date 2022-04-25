@@ -1,103 +1,121 @@
 <script setup>
+import { useRouter, useRoute } from 'vue-router'
+import { onMounted, ref } from "vue";
+import axios from 'axios'
+import { BASE_URL } from '../assets/env'
 
-const data = {
-    'posts': [
-        { 
-            'id': 0,
-            'title': 'Post 1 Title',
-            'img': 'img url',
-            'user_id': 1,
-            'username': 'Matthew Ariel',
-            'likes': 100,
-            'date': '2022-02-01',
-            'content': 'asdasd asd asd asd asd asd asd asd asd asd asd asd asd a'
-        },
-    ],
-    'comments': [
-        {
-            'id': 0,
-            'date': '2022-02-01',
-            'username': 'miebakso',
-            'user_id': 0,
-            'content': 'asdasd asdasd asd asd asd asd asd asd'
-        },
-        {
-            'id': 0,
-            'date': '2022-02-01',
-            'username': 'miebakso',
-            'user_id': 0,
-            'message': 'asdasd asdasd asd asd asd asd asd asd'
-        },
-        {
-            'id': 0,
-            'date': '2022-02-01',
-            'username': 'miebakso',
-            'user_id': 0,
-            'message': 'asdasd asdasd asd asd asd asd asd asd'
-        }   
-    ]
+const router = useRouter()
+const route = useRoute()
+const p_id = route.query.id
+const data = ref(null)
+
+console.log(p_id)
+
+
+onMounted(async () => {
+	try {    
+		const resp = await axios({
+			method: 'GET',
+			url: 'post/'+p_id,
+			baseURL: BASE_URL,
+		}).then(rsp => {
+			data.value = rsp.data
+            console.log(rsp.data)
+		})
+	} catch(error) {
+		console.log(error)
+	}
+})
+
+
+async function commentPost(msg) {
+    try {   
+        const user_id = localStorage.getItem('user_id')
+        const data1 = {
+            'message': msg,
+            'user_id': user_id,
+            'post_id': p_id,
+            
+        } 
+        const resp = await axios({
+            method: 'POST',
+            url: 'post/comment',
+            baseURL: BASE_URL,
+            data: data1
+        })
+        if (resp.status == 200) {
+            router.push({ name: 'post', query: {'id': p_id}})
+        } 
+         router.push({ name: 'post', query: {'id': p_id}})
+    } catch(error) {
+        console.log(error)
+        
+    }
 }
+
 </script>
 
 <template>
 <div class="row justify-content-center">
     <div class="row">
         <div class="col-md-3 custom-chat">
-            <form>
+            <form @submit.prevent="commentPost(msg)">
                 <div class="form-group">
                 <h4>Message</h4>
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="4"></textarea>
+                <textarea  v-model="msg" class="form-control" id="exampleFormControlTextarea1" rows="4"></textarea>
                 </div>
-                <button class="button-custom btn btn-lg btn-outline-success">Send </button>
+                <button type="submit" class="button-custom btn btn-lg btn-outline-success">Send </button>
             </form>
         </div>
     </div>
 
     <div class="col-md-6 ">
-        <div v-for="post in data['posts']" :key="post.id">
+        <div v-if="data">
             <div class="custom-card card" >
-                <img src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg" class="card-img-top" alt="">
+                <img v-bind:src="data.s3_img" class="card-img-top" alt="">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
-                        <h5 class="card-title">{{post.title}}</h5>
+                        <h5 class="card-title">{{data.title}}</h5>
                         </div>
                     </div>
                     <div class="row">
-                         <div class="col-md-7">
-                            <b>{{post.username}}</b>
+                         <div class="col-md-4">
+                            <b>{{data.username}}</b>
                         </div>
-                        <div class="col-md-2 d-flex justify-content-end">
-                            <div><i class="fa-solid fa-heart"></i>{{post.likes}}</div>
+                        <div class="col-md-4 d-flex justify-content-end">
+                            <div><i class="fa-solid fa-heart"></i>{{data.n_like}}</div>
                         </div>
-                        <div class="col-md-3 d-flex justify-content-end">
-                            <p>{{post.date}}</p>
+                        <div class="col-md-4 d-flex justify-content-end">
+                            <p>{{data.post_datetime}}</p>
                         </div>
                     </div>
                     <div class="row custom-comment">
-                        <p>{{post.content}} asdasdas ads das dasd asd asd asd asd asd asd asd asd asd as</p>
+                        <p>{{data.content}}</p>
                     </div>
                 </div>
             </div>
         </div>
+        <div v-if="data">
         <div v-for="comment in data['comments']" :key="comment.id">
             <div class="custom-card card" >
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-8">
-                        <h7 class="card-title">{{comment.username}}</h7>
+                        <p class="card-title">{{comment.username}}</p>
                         </div>
                         <div class="col-md-4 text-right d-flex justify-content-end">
-                            <p>{{comment.date}}</p>
+                            <p>{{comment.msg_datetime}}</p>
                         </div>
                     </div>
                     <div class="row">
-                        <p>{{comment.message}} asdasdas ads das dasd asd asd asd asd asd asd asd asd asd as</p>
+                        <p>{{comment.message}}</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        </div>
+    </div> 
 </div>
 </template>
 

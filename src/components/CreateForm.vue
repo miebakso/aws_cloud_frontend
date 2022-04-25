@@ -1,17 +1,40 @@
 <script setup>
 import {ref} from "vue"
+import axios from 'axios'
+import { BASE_URL } from '../assets/env'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const file = ref(null)
 
-function onSubmit(title, content) {
-	console.log(title)
-    console.log(content)
-    console.log(file.value.files)
-	// router.push({ name: 'search', query:{'keyword': keyword}})
+async function onSubmit(title, content) {
+    const user_id = localStorage.getItem('user_id')
+    const data = new FormData();
+    // console.log(file)
+    // console.log(e)
+    // console.log(file.value.files)
+    data.append("file", file.value.files[0]);
+    data.append("title", title)
+    data.append("content", content)
+    data.append("user_id", user_id)
+    const resp = await axios({
+        method: 'POST',
+        url: 'post/create',
+        headers: {'Content-Type': 'multipart/form-data'},
+        baseURL: BASE_URL,
+        data: data
+    }).then(rsp => {
+        console.log(rsp)
+        router.push({ name: 'posts', params: {'id': user_id}})
+    }).catch((error) => {
+        console.log(error)
+    })
+	
 }
-function uploadFile() {
-    console.log("selected file",)
-}
+
+// function uploadFile() {
+//     console.log("selected file")
+// }
 
 </script>
 
@@ -20,7 +43,7 @@ function uploadFile() {
         
         <div class="custom-post-form row">
             <div class="col-xs-12 col-md-6">
-            <h1> Stock Forum Login</h1>
+            <h1> Post Create</h1>
             <form @submit.prevent="onSubmit(title, content)">
                 <div class="form-group" >
                     <label for="title">Title</label>

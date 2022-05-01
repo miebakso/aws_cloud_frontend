@@ -11,6 +11,8 @@ const data = ref(null)
 
 console.log(p_id)
 
+const h_like = ref(true)
+
 
 onMounted(async () => {
 	try {    
@@ -25,6 +27,7 @@ onMounted(async () => {
 	} catch(error) {
 		console.log(error)
 	}
+    
 })
 
 
@@ -46,11 +49,67 @@ async function commentPost(msg) {
         if (resp.status == 200) {
             router.push({ name: 'post', query: {'id': p_id}})
         } 
-         router.push({ name: 'post', query: {'id': p_id}})
+        router.push({ name: 'post', query: {'id': p_id}})
     } catch(error) {
         console.log(error)
         
     }
+}
+
+async function like(p_id){
+	try {    
+        const user_id = localStorage.getItem('user_id')
+		const resp = await axios({
+			method: 'GET',
+			url: 'user/has/like?post_id='+p_id+'&user_id='+user_id,
+			baseURL: BASE_URL,
+		}).then(rsp => {
+			h_like.value = rsp.data
+            console.log(h_like.value)
+		})
+	} catch(error) {
+		console.log(error)
+	}
+    if(h_like.value){
+        console.log('aaaaa')
+        try {    
+            const u_id = localStorage.getItem('user_id')
+            const resp = await axios({
+                method: 'POST',
+                url: 'post/unlike',
+                baseURL: BASE_URL,
+                data: {
+                    'user_id': u_id,
+                    'post_id': p_id
+                }
+            }).then(rsp => {
+                h_like.value = rsp.data
+                console.log(h_like.value)
+            })
+        } catch(error) {
+            console.log(error)
+        }
+    } else {
+        console.log('bbbbb')
+        try {    
+            const u_id = localStorage.getItem('user_id')
+            const resp = await axios({
+                method: 'POST',
+                url: 'post/like',
+                baseURL: BASE_URL,
+                data: {
+                    'user_id': u_id,
+                    'post_id': p_id
+                }
+            }).then(rsp => {
+                h_like.value = rsp.data
+                console.log(h_like.value)
+            })
+        } catch(error) {
+            console.log(error)
+        }
+    }
+    router.push({name: 'post', query: {'id': p_id}})
 }
 
 </script>
@@ -83,7 +142,7 @@ async function commentPost(msg) {
                          <div class="col-md-4">
                             <b>{{data.username}}</b>
                         </div>
-                        <div class="col-md-4 d-flex justify-content-end">
+                        <div class="col-md-4 d-flex justify-content-end" @click="like(data.id)">
                             <div><i class="fa-solid fa-heart"></i>{{data.n_like}}</div>
                         </div>
                         <div class="col-md-4 d-flex justify-content-end">

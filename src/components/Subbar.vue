@@ -8,6 +8,7 @@ import { onMounted, ref } from "vue";
 
 const props = defineProps(['searchkey'])
 const router = useRouter()
+const route = useRoute()
 
 const keyword = props.searchkey
 
@@ -37,8 +38,20 @@ if (keyword != null ){
 	searhPosts(keyword)
 }
 
+
+
+
+const has_like = ref(null)
+const p_id = route.query.id
+
+
+
+
+
+
 function viewPostDetail(id){
-    router.push({ name: 'post', params: {'id': id}})
+	console.log('asdasdasdasda')
+    router.push({ name: 'post', query: {'id': id}})
 }
 
 </script>
@@ -69,8 +82,8 @@ function viewPostDetail(id){
 		<div class="row justify-content-center">
 				<div class="col-md-6 ">
 					<div v-for="(post) in data" :key="post.id">
-						<div class="custom-card card" @click="viewPostDetail(post.id)">
-							<img v-bind:src="post.s3_img" class="card-img-top" alt="...">
+						<div class="custom-card card" >
+							<img v-bind:src="post.s3_img" @click="viewPostDetail(post.id)" class="card-img-top" alt="...">
 							<div class="card-body">
 								<div class="row">
 									<div class="col-md-12">

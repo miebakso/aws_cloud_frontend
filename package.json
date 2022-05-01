@@ -1,7 +1,13 @@
 {
   "name": "vue-temp",
   "version": "0.0.0",
+  "engines" : { 
+    "npm" : ">=8.5.0",
+    "node" : ">=16.14.0"
+  },
+  "main": "index.html",
   "scripts": {
+    "start": "npm run deb",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --port 5050"
@@ -16,3 +22,4 @@
     "vite": "^2.9.1"
   }
 }
+  

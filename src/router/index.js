@@ -9,6 +9,7 @@ import RegisterView from '../views/RegisterView.vue'
 import UserPostsView from '../views/UserPostsView.vue'
 import EditPostView from '../views/EditPostView.vue'
 import CreatePostView from '../views/CreatePostView.vue'
+import AdminView from '../views/AdminView.vue'
 
 
 const router = createRouter({
@@ -60,10 +61,16 @@ const router = createRouter({
       component: RegisterView
     },
     {
+      path: '/admin',
+      name: 'admin',
+      component: AdminView
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'notfound',
       component: NotFound
     }
+   
   ]
 })
 
